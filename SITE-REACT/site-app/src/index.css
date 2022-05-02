@@ -1,0 +1,67 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.vl {
+  border-left: 6px solid lightgray;
+  height: 100%;
+  position: absolute;
+  left: 10%;
+  top: 4.2%;
+}
+.container{
+  position: absolute;
+  top : 0;
+  left:10%;
+  top: 4%;
+}
+.button-cat{
+  background-color: green;
+}
+.forms{
+  margin: 0;
+  padding-top: 10%;
+}
+.reg_container{
+  border: 3px solid gray;
+  padding-top: 10%;
+}
+.offscreen {
+  position: absolute;
+  left: -9999px;
+}
+
+@media only screen and (min-width : 1200px) {
+  .container { max-width: 100%; }
+}
+.instructions {
+  font-size: 0.75rem;
+  border-radius: 0.5rem;
+  background: #000;
+  color: #fff;
+  padding: 0.25rem;
+  position: relative;
+  bottom: -10px;
+}
+.TextField-root.Mui-error{
+  background-color: red;
+}
+.errmsg {
+  background-color: lightpink;
+  color: firebrick;
+  font-weight: bold;
+  padding: 30%;
+  margin-bottom: 30%;
+}
+
+.big-banner{
+  background-image: url('./static/background.jpg');
+}
+
+
+
+

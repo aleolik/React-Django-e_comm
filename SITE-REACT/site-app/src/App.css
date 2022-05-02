@@ -1,0 +1,79 @@
+
+
+
+
+
+
+
+
+.footer{
+    position:absolute;
+    height:0%;
+    left:0px;
+    bottom:1.4%;
+    width:100%;
+ }
+.hr-line{
+  border-top: 5px solid rgba(0,0,0,.1);
+}
+.vl {
+  border-left: 6px solid rgba(0,0,0,.1);
+  height: 95.8%;
+  position: absolute;
+  left: 10%;
+  top: 4.2%;
+}
+.us{
+  text-align:center;
+}
+.active{
+  color: var(--color-active);
+  cursor: pointer;
+  color: blue;
+}
+
+
+.errmsg {
+  background-color: lightpink;
+  color: firebrick;
+  font-weight: bold;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+
+.big-banner{
+  background-image: url('./static/background.jpg');
+}
+
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.row > div[class*='col-'] {
+ display: flex;
+}
+
+.succesmsg {
+  background-color: lightgreen;
+  font-weight: bold;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  text-align: center;
+  color: black;
+}
+
+.background-img{
+  background-image: url('./static/background.jpg');
+  background-color: black;
+}
+
+.card-footer{
+  background-color: rgba(221,221,221,0.8);
+}
+.btn-primary{
+  background-color: rgba(78, 98, 180, 0.68);
+}
+
