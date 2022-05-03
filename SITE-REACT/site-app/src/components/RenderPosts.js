@@ -17,7 +17,7 @@ const RenderPosts = (props) => {
     return(
         <div className='card-group'>
             {posts.map((post) => {
-            const post_link = `/${post.name}`
+            const post_link = `post/${post.name}`
             return(
                 <div key={post.id} className=''>
                     <div className={bgcolor} style={{'width' : width+'rem','height':height+'rem'}}>

@@ -14,14 +14,14 @@ const PostPage = () => {
  const basemedia = "http://127.0.0.1:8000/media/"
 
  const [result,setresult] = useState(false)
-  useEffect(() => {
+
+ const [error,seterror] = useState(false)
+  useEffect(() =>{
     const GetPost = async() => {
         const url = `getlistofposts/`
         const data = await axiosinstance.post(url,{
             'name':params.name
         }).then((res) => res.data[0])
-        console.log(data)
-        // const data = res.data[0]
         setpost({
             'name':data.name,
             'body':data.body,
@@ -31,19 +31,14 @@ const PostPage = () => {
         if (data){
             setresult(true)
         }
-    }
-    try{
-        GetPost()
-    }
-    catch(e){
-        console.error('Error catch :'  , e)
-        setresult(false)
-    }
+      }
+      GetPost().catch((e) => {
+        seterror(true)
+      })
   },[])
   return (
     <div>
-        {result 
-        ?(
+        {result &&
             <div key={post.id}>
                 <div className='container'>
                     <div>
@@ -53,8 +48,10 @@ const PostPage = () => {
                     </div>
                 </div>
             </div>
-        )
-        : <Notfoundpage/> }
+        }
+        {(error && !result) &&
+            <Notfoundpage/>
+        }
     </div>
     )
 }

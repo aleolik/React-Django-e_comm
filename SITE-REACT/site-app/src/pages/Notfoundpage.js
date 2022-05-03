@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 
 import error_image from '../static/error.png'
+
 const Notfoundpage = () => {
   return (
     <div>

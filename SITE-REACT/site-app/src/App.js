@@ -33,22 +33,22 @@ function App() {
     <div>
       <Routes>
         <Route path='/' element={<Layout/>}>
-          <Route element={<NotLogin/>}>
-            <Route path="/login" element={<Login/>}></Route>
-          </Route>
-          <Route path="/register" element={<SignIn/>}/>
-          <Route path="/about" element={<About/>}/>
-          <Route path="*" element={<Notfoundpage/>}/>
-          <Route element={<RequireAuth/>}>
-            <Route element={<Mygoods/>} path='/mygoods'></Route>
-          </Route>
-          <Route path='/posts' element={<Goods/>}></Route>
+            <Route element={<NotLogin/>}>
+              <Route path="/login" element={<Login/>}></Route>
+            </Route>
+            <Route path="/register" element={<SignIn/>}/>
+            <Route path="/about" element={<About/>}/>
             <Route element={<RequireAuth/>}>
-          <Route element={<Admin/>} path='/admin'></Route>
-          </Route>
-          <Route  index element={<Main/>}></Route>
-            <Route path='/:name' element={<PostPage/>}></Route>
-          </Route>
+              <Route element={<Mygoods/>} path='/mygoods'></Route>
+            </Route>
+            <Route path='/posts' element={<Goods/>}></Route>
+              <Route element={<RequireAuth/>}>
+            <Route element={<Admin/>} path='/admin'></Route>
+            </Route>
+            <Route  index element={<Main/>}></Route>
+              <Route path='posts/post/:name' element={<PostPage/>}></Route>
+            <Route path="*" element={<Notfoundpage/>}/>
+            </Route>
       </Routes>
     </div>
     
