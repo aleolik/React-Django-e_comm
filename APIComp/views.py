@@ -7,7 +7,7 @@ from django.middleware import csrf
 from django.contrib.auth import authenticate
 from rest_framework import generics
 from .models import NewUser, Post,Category,SizeCategory, User
-from .serailizers import PostSerializer,CategorySerializer,SizeCategorySeializers,Postsbycategories,GetUsersSerializer,LogoutSerializer
+from .serailizers import PostSerializer,CategorySerializer,SizeCategorySeializers,Postsbycategories,GetUsersSerializer,LogoutSerializer,ChangeUserSerializer
 from rest_framework.permissions import AllowAny,IsAuthenticated
 from rest_framework.views import APIView
 from .serailizers import RegistrtationSerializer
@@ -156,9 +156,11 @@ class CreateCustomUser(APIView):
                 return Response('Please fill all the fields!',status=status.HTTP_400_BAD_REQUEST)
 
 
+class ChangeUserData(APIView):
+    serilizer_class = ChangeUserSerializer
 
-
-
+    def post(self,request):
+        pass
 
 class Login(APIView):
     '''Вход'''
@@ -245,6 +247,7 @@ class FilterPost(APIView):
 
 # filter posts by user
 class FilterPostsByUser(APIView):
+    '''Posts that 1 user bought'''
     serializer_class = PostSerializer
 
     filter_backends = (DjangoFilterBackend)

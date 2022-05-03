@@ -25,40 +25,30 @@ import NotLogin from './hooks/NotLogin';
 
 import axiosInstance from './axiosinstance';
 
+
 import PostPage from './pages/PostPage';
 function App() {
-  const [posts,setposts] = useState([])
-
-
-  useEffect(() => {
-    const GetCats = async() => {
-      const url = `getlistofposts/`
-      await axiosInstance.get(url).then((res) => {
-        setposts(res.data)
-      })
-      GetCats()
-    }
-  },[])
+ 
   return (
     <div>
       <Routes>
-              <Route path='/' element={<Layout/>}>
-                <Route element={<NotLogin/>}>
-                  <Route path="/login" element={<Login/>}></Route>
-                </Route>
-                <Route path="/register" element={<SignIn/>}/>
-                <Route path="/about" element={<About/>}/>
-                <Route path="*" element={<Notfoundpage/>}/>
-                <Route element={<RequireAuth/>}>
-                  <Route element={<Mygoods/>} path='/mygoods'></Route>
-                </Route>
-                <Route path='/posts' element={<Goods/>}></Route>
-                <Route element={<RequireAuth/>}>
-                  <Route element={<Admin/>} path='/admin'></Route>
-                </Route>
-                <Route  index element={<Main/>}></Route>
-                </Route>
-                <Route path='/:name' element={<PostPage/>}></Route>
+        <Route path='/' element={<Layout/>}>
+          <Route element={<NotLogin/>}>
+            <Route path="/login" element={<Login/>}></Route>
+          </Route>
+          <Route path="/register" element={<SignIn/>}/>
+          <Route path="/about" element={<About/>}/>
+          <Route path="*" element={<Notfoundpage/>}/>
+          <Route element={<RequireAuth/>}>
+            <Route element={<Mygoods/>} path='/mygoods'></Route>
+          </Route>
+          <Route path='/posts' element={<Goods/>}></Route>
+            <Route element={<RequireAuth/>}>
+          <Route element={<Admin/>} path='/admin'></Route>
+          </Route>
+          <Route  index element={<Main/>}></Route>
+            <Route path='/:name' element={<PostPage/>}></Route>
+          </Route>
       </Routes>
     </div>
     

@@ -6,9 +6,9 @@ import StickyFooter from '../components/Footer'
 const Layout = () => {
   return (
     <div >
-    <Header></Header>
-    <Outlet></Outlet>
-    <StickyFooter></StickyFooter>
+      <Header></Header>
+      <Outlet></Outlet>
+      <StickyFooter></StickyFooter>
     </div>
   )
 }

@@ -37,7 +37,10 @@ class Postsbycategories(serializers.Serializer):
       model = Post
       fields = ['category']
 
-
+class ChangeUserSerializer(serializers.ModelSerializer):
+   class Meta:
+      model = NewUser
+      fields = ['activation_link','email','user_name','password']
 
 class GetUsersSerializer(serializers.ModelSerializer):
    class Meta:
@@ -59,3 +62,9 @@ class LogoutSerializer(serializers.Serializer):
           RefreshToken(self.token).blacklist()
       except:
           self.fail('bad token')
+
+def generate_activation_link(user_instance):
+    '''верификация по почте,при регистрации пользователя'''
+    if user_instance:
+      user_instance.activation_link = f'' # уникальная ссылка для верификаций по почте.
+      return user_instance

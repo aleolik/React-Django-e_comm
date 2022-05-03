@@ -77,6 +77,7 @@ class NewUser(AbstractBaseUser,PermissionsMixin):
     is_activated_acc =models.BooleanField(default=False) # верификация по почте
     balance = models.PositiveBigIntegerField(default=0) # баланс юзера
     num_goods = models.PositiveIntegerField(default=0) # кол-во вещей в корзине
+    activation_link = models.CharField(max_length=750,default='')
     objects = CustomAccountManager()
     
     #Add image field later 
