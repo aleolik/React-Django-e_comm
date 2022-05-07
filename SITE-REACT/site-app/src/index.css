@@ -58,8 +58,19 @@ body {
   margin-bottom: 30%;
 }
 
-.big-banner{
-  background-image: url('./static/background.jpg');
+.center-error-img{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+  padding-top: 5%;
+}
+
+.center-succes-img{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 15%;
 }
 
 

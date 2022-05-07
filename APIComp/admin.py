@@ -41,7 +41,7 @@ class UserAdminConfig(UserAdmin):
     search_fields = ('email','user_name')
     list_filter = ('email','user_name','is_active','is_staff')
     ordering = ('-start_date',)
-    list_display = ('id','email','user_name','is_active','is_staff','start_date','is_activated_acc','is_superuser')
+    list_display = ('id','email','user_name','is_active','is_staff','start_date','is_activated_acc','is_superuser','activation_link')
 
     fieldsets = (
         (None,{'fields': ('email','user_name')}),

@@ -27,6 +27,8 @@ import axiosInstance from './axiosinstance';
 
 
 import PostPage from './pages/PostPage';
+
+import ActivateAccPage from './pages/ActivateAccPage';
 function App() {
  
   return (
@@ -48,6 +50,7 @@ function App() {
             <Route  index element={<Main/>}></Route>
               <Route path='posts/post/:name' element={<PostPage/>}></Route>
             <Route path="*" element={<Notfoundpage/>}/>
+            <Route path='Activation_link/:user_name' element={<ActivateAccPage/>}></Route>
             </Route>
       </Routes>
     </div>

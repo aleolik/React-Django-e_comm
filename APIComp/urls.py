@@ -36,7 +36,13 @@ urlpatterns = [
     path('token/access_data/',views.GetTokenData.as_view(),name='access-data'),
 
     #filter categories by search title
-    path('filter_posts/',views.FilterPost.as_view(),name='filter_posts')
+    path('filter_posts/',views.FilterPost.as_view(),name='filter_posts'),
+
+    #changeUserActivationLink
+    path('activate/user/',views.ActivateUser.as_view(),name='activate-user'),
+
+    #search_posts
+    path('search/posts/',views.SearchPosts.as_view(),name='search-posts'),
 ]   
 
 

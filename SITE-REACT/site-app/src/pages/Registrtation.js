@@ -103,24 +103,24 @@ export default function SignIn() {
     const url = `register/`
     if (username && password && email){
       if (valid_username){
-        try{
           await axiosInstance.post(url,{
             email : email,
             user_name :username,
             password : password,
+          }).then((res) => {
+            setSuccesMsg('Account was created!Please Verificate your email')
+            email_input.value = ''
+            user_name_input.value = ''
+            passowrd_input.value = ''
+            setTimeout(() => {setSuccesMsg('')},5000)
           })
-          setSuccesMsg('Account was created!Please Verificate your email')
-          email_input.value = ''
-          user_name_input.value = ''
-          passowrd_input.value = ''
-          setTimeout(() => {setSuccesMsg('')},5000)
-        } catch(e) {
+          .catch((e) => {
           if (e.response.data.length < 150){ // to prevent error in code
           setErrMsg(e.response.data)}
           else{
             setErrMsg('404,something  went wrong...')
           }
-        }}
+        })}
         else{
           setErrMsg('Username is not correct!Please follow the instructions above')
         }}

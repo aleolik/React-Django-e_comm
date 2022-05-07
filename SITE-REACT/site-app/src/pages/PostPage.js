@@ -6,6 +6,7 @@ import Notfoundpage from './Notfoundpage'
 
 import axiosinstance from '../axiosinstance'
 
+import {GiShoppingCart} from 'react-icons/gi'
 const PostPage = () => {
  const params = useParams() // параметры в url строке
  
@@ -41,11 +42,15 @@ const PostPage = () => {
         {result &&
             <div key={post.id}>
                 <div className='container'>
-                    <div>
-                        <h1 style={{'textAlign':'center'}}>{post.name}</h1>
-                        <h5>{post.body}</h5>
-                        <img className="card-img-top" src={basemedia+post.photo} style = {{'width':380+'px','height':  225+'px'}} alt="is loading..."/>
-                    </div>
+                        <div style={{'maxWidth':50+'px'}}>
+                            <h1>{post.name}</h1>
+                            <h5>{post.body}</h5>
+                        </div>
+                        <div style={{'maxWidth':500+'px'}}>
+                            <img className="card-img-top" src={basemedia+post.photo} alt="is loading..."/>
+                        </div>
+                        <button className='btn btn-success'>Купить</button>
+                        <button className='btn btn-primary'><GiShoppingCart/>Корзина</button>
                 </div>
             </div>
         }

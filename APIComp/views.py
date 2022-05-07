@@ -1,4 +1,8 @@
 
+from asyncio import constants
+from sys import api_version
+from unicodedata import name
+from winreg import REG_QWORD
 from django.http import JsonResponse
 from rest_framework import authentication
 from urllib import response
@@ -20,6 +24,7 @@ from django.core.mail import send_mail
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters import rest_framework as filters
 
+from django.db.models import Q
 
 
 #PRODUCT OPERATIONS
@@ -128,12 +133,12 @@ class CreateCustomUser(APIView):
 
                 email = request.data['email']
 
-
+                reg_serializer.activation_link = f'Activation_link/{user_name}'
                 reg_serializer.save()  # создаёт акк
 
 
                 '''Временно отключил рассылку'''
-                # html_message = '<div style={"text-align":"center"}><a href="http://localhost:3000/login" onclick="Activate_user(user_name)">Confirm Your regestration by following the link below...</a></div>'
+                # html_message = f'<div><a href="{"http://localhost:3000/"+reg_serializer.activation_link}">Confirm Your regestration by following the link below...</a></div>'
                 # send_mail( # отправляет html_message,для верификций почты
                 # subject=f'Activate your account,{user_name}',
                 # message=None,
@@ -257,3 +262,34 @@ class FilterPostsByUser(APIView):
             posts = Post.objects.filter(user=user).values()
             return Response({'posts':posts})
         return Response('Нет категории,соотвествующих вашему запросу')
+
+
+
+class ActivateUser(APIView):
+    '''Подтверждает почту юзера'''
+    def put(self,request):
+        user_name = request.data['user_name']
+        
+        if user_name:
+            user = NewUser.objects.filter(user_name=user_name).first()
+            if user:
+                user.is_activated_acc = True
+                user.save()
+                return Response("Succes : You're account has been activated.",status=status.HTTP_200_OK)
+            return Response('User with this username does not exist',status=status.HTTP_400_BAD_REQUEST)
+        return Response('Error,please inpit username',status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+class SearchPosts(APIView):
+    '''Gets data from search bar to filter posts elements'''
+    def get(self,request):
+        search = request.data['search']
+        if search:
+            searched_posts = Post.objects.filter(
+                Q(name__icontains = search) |
+                Q(body__icontains = search)
+            ).values()
+            return Response(searched_posts)
+        return Response('Search bar is empty!Please input something')

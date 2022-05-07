@@ -30,6 +30,7 @@ class RegistrtationSerializer(serializers.ModelSerializer):
        instance = self.Meta.model(**validated_data)
        if password is not None:
           instance.set_password(password)
+       instance.activation_link = f'Activation_link/{instance.user_name}'
        instance.save()
        return instance
 class Postsbycategories(serializers.Serializer):
@@ -62,9 +63,3 @@ class LogoutSerializer(serializers.Serializer):
           RefreshToken(self.token).blacklist()
       except:
           self.fail('bad token')
-
-def generate_activation_link(user_instance):
-    '''верификация по почте,при регистрации пользователя'''
-    if user_instance:
-      user_instance.activation_link = f'Activation_Link/{user_instance.user_name}' # уникальная ссылка для верификаций по почте.
-      return user_instance
