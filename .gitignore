@@ -3,4 +3,4 @@ APIComp/migrations/
 db.sqlite3
 settings.py
 
-media/core/core/SITE-REACT/site-app/static
+media/core/core/SITE-REACT/site-app/photos/
