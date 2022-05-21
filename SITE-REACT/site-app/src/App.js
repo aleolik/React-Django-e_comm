@@ -29,28 +29,41 @@ import axiosInstance from './axiosinstance';
 import PostPage from './pages/PostPage';
 
 import ActivateAccPage from './pages/ActivateAccPage';
+
+import UsePersistLogin from './hooks/UsePersistLogin';
 function App() {
  
   return (
     <div>
       <Routes>
-        <Route path='/' element={<Layout/>}>
-            <Route element={<NotLogin/>}>
-              <Route path="/login" element={<Login/>}></Route>
-            </Route>
-            <Route path="/register" element={<SignIn/>}/>
-            <Route path="/about" element={<About/>}/>
-            <Route element={<RequireAuth/>}>
-              <Route element={<Mygoods/>} path='/mygoods'></Route>
-            </Route>
-            <Route path='/posts' element={<Goods/>}></Route>
-              <Route element={<RequireAuth/>}>
-            <Route element={<Admin/>} path='/admin'></Route>
-            </Route>
-            <Route  index element={<Main/>}></Route>
-              <Route path='posts/post/:name' element={<PostPage/>}></Route>
-            <Route path="*" element={<Notfoundpage/>}/>
-            <Route path='Activation_link/:user_name' element={<ActivateAccPage/>}></Route>
+            {/* public routes*/}
+            <Route path='/' element={<Layout/>}>
+              <Route element={<UsePersistLogin/>}>
+                <Route  index element={<Main/>}></Route>
+                <Route element={<NotLogin/>}>
+                  <Route path="/login" element={<Login/>}></Route>
+                </Route>
+
+                <Route path="/register" element={<SignIn/>}/>
+
+                <Route path="/about" element={<About/>}/>
+
+                <Route path='/posts' element={<Goods/>}></Route>
+
+                <Route path='posts/post/:name' element={<PostPage/>}></Route>
+
+                <Route path="*" element={<Notfoundpage/>}/>
+
+                <Route path='Activation_link/:user_name' element={<ActivateAccPage/>}></Route>
+
+                {/* private routes*/}
+                  <Route element={<RequireAuth/>}>
+                    <Route element={<Mygoods/>} path='/mygoods'></Route>
+                  </Route>
+                  <Route element={<RequireAuth/>}>
+                    <Route element={<Admin/>} path='/admin'></Route>
+                  </Route>
+              </Route>
             </Route>
       </Routes>
     </div>

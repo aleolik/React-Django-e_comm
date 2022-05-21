@@ -1,9 +1,7 @@
 
-from asyncio import constants
-from sys import api_version
-from unicodedata import name
-from winreg import REG_QWORD
+
 from django.http import JsonResponse
+from requests import request
 from rest_framework import authentication
 from urllib import response
 from rest_framework_simplejwt.tokens import RefreshToken,AccessToken
@@ -25,6 +23,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django_filters import rest_framework as filters
 
 from django.db.models import Q
+
+
 
 
 #PRODUCT OPERATIONS
@@ -65,13 +65,13 @@ def get_data_from_access(token):
             # is_staff = user.is_staff
             # is_admin = user.is_admin
             data = {'email':email,'user_name':user_name}
-            return Response(data)
+            return Response(data,status=status.HTTP_200_OK)
         else:
-            return Response('Error :  Token is not valid or expired!',status=status.HTTP_403_FORBIDDEN)
+            return Response('Error :  Token is not valid or expired!',status=status.HTTP_400_BAD_REQUEST)
 
 
     except:
-        return Response('Error :  Token is not valid or expired!',status=status.HTTP_403_FORBIDDEN)
+        return Response('Error :  Token is not valid or expired!',status=status.HTTP_400_BAD_REQUEST)
 
 
 
@@ -80,13 +80,13 @@ class GetTokenData(APIView):
     def post(self,request):
         token = request.data['access_token']
         data = get_data_from_access(token)
-        return Response(data).data
+        return data
 
 
 # MACHINE CATEGORIES
 class GetCreateCategory(generics.ListCreateAPIView):
     '''Создаёт новую или получает все категории,отвечающие за принадлежность товара'''
-    queryset = Category.objects.all()
+    queryset = Category.objects.order_by("-popularity")[:10]
     serializer_class = CategorySerializer
 class DeleteUpdateCategory(generics.RetrieveUpdateDestroyAPIView):
     '''Удаляет или изменяет существующие категории,отвечающие за принадлженость поста'''
@@ -138,7 +138,7 @@ class CreateCustomUser(APIView):
 
 
                 '''Временно отключил рассылку'''
-                # html_message = f'<div><a href="{"http://localhost:3000/"+reg_serializer.activation_link}">Confirm Your regestration by following the link below...</a></div>'
+                html_message = f'<div><a href="{"http://localhost:3000/"+reg_serializer.activation_link}">Confirm Your regestration by following the link below...</a></div>'
                 # send_mail( # отправляет html_message,для верификций почты
                 # subject=f'Activate your account,{user_name}',
                 # message=None,
@@ -176,9 +176,9 @@ class Login(APIView):
         user = NewUser.objects.filter(user_name=user_name).first()
         if user is None:
             return Response('Login or passowrd are uncorrect!',status=status.HTTP_400_BAD_REQUEST)
-        if not user.check_password(password):
+        elif not user.check_password(password):
             return Response('Login or passowrd are uncorrect!',status=status.HTTP_400_BAD_REQUEST)
-        if user.is_activated_acc:
+        elif user.is_activated_acc:
             data = get_tokens_for_user(user)  
             response = Response() 
             response.set_cookie(
@@ -193,6 +193,7 @@ class Login(APIView):
             response.data = data
             response.data['is_staff'] = user.is_staff
             response.data['is_superuser'] = user.is_superuser
+            # response.data['products'] = user.products.all().values()
             
             return response
         else:
@@ -211,10 +212,10 @@ class Logout(APIView):
             if refresh_token != None:
                 refresh_token = RefreshToken(refresh_token)
                 refresh_token.blacklist()
-                return Response({'Succes' : 'token was blacklisted'})
-            return Response({'Error' : "Token is wrong or blacklisted already"})
+                return Response({'Succes' : 'token was blacklisted'},status=status.HTTP_200_OK)
+            return Response({'Error' : "Token is wrong or blacklisted already"},status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            return Response({'Error' : e})
+            return Response(str(e))
 
 
 class  Get_posts_by_categories(ListAPIView):
@@ -293,3 +294,34 @@ class SearchPosts(APIView):
             ).values()
             return Response(searched_posts)
         return Response('Search bar is empty!Please input something')
+
+
+class AddPostToCart(APIView):
+    '''Добавляет selected post в корзину'''
+    def post(self,request):
+        post_name = request.data['post_name']
+        user_name = request.data['user_name']
+        if post_name and user_name:
+            user = NewUser.objects.filter(user_name=user_name).first()
+            post = Post.objects.filter(name=post_name).first()
+            if user and post:
+                user.products.add(post)
+                return Response(f'Succes,you have bought it!{user.products}',status=status.HTTP_200_OK)
+            return Response('Error user_name or post_name are incorret!',status=status.HTTP_400_BAD_REQUEST)
+
+        return Response('Error,please input something',status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+class GetUserCart(APIView):
+    '''Получает корзину и покупи конкретного юзера(/mygoods page in js)'''
+    def post(self,request):
+        user_name = request.data['user_name']
+        if user_name:
+            user = NewUser.objects.filter(user_name=user_name).first()
+            if user:
+                products = user.products.all().values()
+                return Response(products)
+            return Response('User with this username does not exist!',status=status.HTTP_400_BAD_REQUEST)
+        return Response('please select user!',status=status.HTTP_400_BAD_REQUEST)

@@ -2,3 +2,5 @@
 APIComp/migrations/
 db.sqlite3
 settings.py
+
+SITE-REACT/site-app/src/static/

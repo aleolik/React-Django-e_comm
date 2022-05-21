@@ -6,6 +6,7 @@ import useAuth from '../hooks/useAuth'
 
 const RequireAuth = () => {
     const {auth} = useAuth()
+    
     const location = useLocation()
   return (
    auth.access_token

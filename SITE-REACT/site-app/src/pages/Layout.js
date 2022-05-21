@@ -5,7 +5,7 @@ import Header from '../components/Header'
 import StickyFooter from '../components/Footer'
 const Layout = () => {
   return (
-    <div >
+    <div>
       <Header></Header>
       <Outlet/>
       <StickyFooter></StickyFooter>

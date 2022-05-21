@@ -11,7 +11,7 @@ from  .models import Post,Category,SizeCategory
 
 @admin.register(Category)
 class Categories(admin.ModelAdmin):
-    list_display = ['pk','title']
+    list_display = ['pk','title','popularity']
 # Register your models here.
 @admin.register(Post)
 class Posts(admin.ModelAdmin):
@@ -46,6 +46,6 @@ class UserAdminConfig(UserAdmin):
     fieldsets = (
         (None,{'fields': ('email','user_name')}),
         ('Permissions',{'fields' :('is_staff','is_active','is_activated_acc')}),
-        ('User characteristics',{'fields' :('balance','num_goods')}),
+        ('User characteristics',{'fields' :('balance','products')}),
     )
 admin.site.register(NewUser,UserAdminConfig)

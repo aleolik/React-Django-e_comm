@@ -67,20 +67,22 @@ const Goods = () => {
 
 
   return (
-    <div>
-      <div className='container-fluid' >
-        <h4 className="h4">Popular Categories :</h4>
-        <div>
-          <button className='btn btn-primary' onClick={() => SetCurrentCategory('')}>All</button>
-        </div>
-          <Categories SetCurrentCategory={SetCurrentCategory}/>
-      </div>
     <div className='container-fluid'>
-      <div className='vl'></div>
-          <div className='container'>
-              <RenderPosts posts={SortedPosts} />
-         </div>
-       </div>
+      <div className='row'>
+        <div className='.col-6 .col-md-4'>
+          <div>
+            <button className='btn btn-primary' onClick={() => SetCurrentCategory('')}>All</button>
+            <Categories SetCurrentCategory={SetCurrentCategory}/>
+          </div>
+        </div>
+        <div className='.col-12 .col-sm-6 .col-md-8'>
+            <div className='container'>
+              <div className='row'>
+                <RenderPosts posts={SortedPosts} />
+              </div>
+            </div>
+        </div>
+      </div>
     </div>
   )
 }

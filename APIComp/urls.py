@@ -43,9 +43,16 @@ urlpatterns = [
 
     #search_posts
     path('search/posts/',views.SearchPosts.as_view(),name='search-posts'),
+
+    #user opertains
+    path('add_post_to_cart/',views.AddPostToCart.as_view(),name='add_to_bucket'),
+    path('get_user_cart/',views.GetUserCart.as_view(),name='user-cart')
 ]   
 
 
 # media
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,document_root = settings.MEDIA_ROOT)
+
+
+

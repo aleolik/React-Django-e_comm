@@ -9,6 +9,8 @@ import { useEffect } from "react";
 import useAuth from "./useAuth";
 import useRefreshToken from "./useRefreshToken";
 import axios from "axios";
+
+import useLogout from './useLogout'
 const useAxiosPrivate = () => {
   
   const refresh = useRefreshToken()
@@ -16,44 +18,47 @@ const useAxiosPrivate = () => {
   const { SetAuth } = useAuth()
 
   const {auth} = useAuth()
+
+  const logout = useLogout()
+  
   useEffect(() => {
     const RequestInterceptior = AxiosPrivate.interceptors.request.use(
       config => {
-        if(auth.access_token) {
-          config.headers['Authorization'] = `JWT ${auth.access_token}`
-          const url = 'token/access_data/'
-          try{
-          const data = AxiosPrivate(url,{
-            access_token : auth.access_token
-          })
-          const email = data.email
-          const user_name = data.user_name
-          SetAuth({user_name:user_name,email:email})
+        if (!config.headers.Authorization) {
+          config.headers.Authorization=`JWT ${auth?.access_token}`
         }
-          catch(err){
-            console.error(err)
-          }  
-        }
+        console.log(auth?.access_token)
+        return config
       },(error) => Promise.reject(error)
     )
     const ResponseInterceptor = AxiosPrivate.interceptors.response.use(
         response => response,
         async(error) => {
           const PrevRequest = error?.config
-          if (error?.response?.status === 403 && !PrevRequest.sent){
+          if (error?.response?.status === 401 && !PrevRequest.sent){
+
+            console.log('old_token',auth?.access_token)
+
             PrevRequest.sent = true
-            const RefreshTokens = refresh()
-            PrevRequest.headers['Authorization'] = `JWT ${auth.access_token}`
+            
+            const new_access_token = await refresh()
+            
+            
+            if (new_access_token){
+                PrevRequest.headers['Authorization'] = `JWT ${new_access_token}`}
+            else{
+                logout()
+            }
             return AxiosPrivate(PrevRequest)
           }
           return Promise.reject(error)
         }
       )
       return () => {
-        axios.interceptors.request.eject(RequestInterceptior)
-        axios.interceptors.request.eject(ResponseInterceptor)
+        AxiosPrivate.interceptors.request.eject(RequestInterceptior)
+        AxiosPrivate.interceptors.response.eject(ResponseInterceptor)
       }
-  },[auth])
+  },[auth,refresh])
   return AxiosPrivate
 }
 

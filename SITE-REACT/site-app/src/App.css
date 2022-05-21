@@ -74,6 +74,8 @@
   background-color: rgba(221,221,221,0.8);
 }
 .btn-primary{
-  background-color: rgba(78, 98, 180, 0.68);
+  background-color: rgba(34,60,132,100);
 }
-
+.active{
+  color: green;
+}

@@ -1,13 +1,15 @@
 import axios, { Axios } from 'axios'
 import React, { useEffect, useState } from 'react'
 import useAuth from '../hooks/useAuth'
-import useAxiosPrivate from '../hooks/useAxiosPrivate'
 
 
 import useRefreshToken from '../hooks/useRefreshToken'
 
 
 import {useNavigate,useLocation } from 'react-router-dom'
+
+import useAxiosPrivate from '../hooks/useAxiosPrivate'
+import axiosInstance, { AxiosPrivate } from '../axiosinstance'
 const Users = () => {
   const [users,SetUsers] = useState([])
 
@@ -17,22 +19,28 @@ const Users = () => {
 
   const location = useLocation ()
 
-  const AxiosPrivate = useAxiosPrivate()
-
   const navigate = useNavigate()
+
+
+  const AxiosPrivate = useAxiosPrivate()
+  
   const url = `http://127.0.0.1:8000/list_of_users/`
+ 
   useEffect(() => {
     let IsMounted = true
     const controller = new AbortController()
 
+
+
     const GetUsers  = async() => {
       try{
-        const response = await axios.get(url,{
+        const response = await AxiosPrivate.get(url,{
           signal : controller.signal})
           IsMounted && SetUsers(response.data);
       }
       catch (err) {
           console.error(err)
+          navigate('/login',{state : {from : location},replace:true})
       }}
       GetUsers()
 

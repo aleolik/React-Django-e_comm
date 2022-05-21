@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 
 
 import Users from '../components/Users'
+
 const Admin = () => {
   return (
     <div>

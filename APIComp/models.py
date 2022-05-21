@@ -20,10 +20,13 @@ class SizeCategory(models.Model):
     '''Модель,отвечающая за размер машины'''
     size = models.CharField(max_length=250)
 
+
 class Category(models.Model):
     '''Модель,отвечающая за принадлежность машины к определённой категорий(производитель,год,вид и т.д)'''
     title = models.CharField(max_length=250)
-
+    popularity = models.BigIntegerField(default=0)
+    class Meta:
+        ordering = ['popularity']
     
 class Post(models.Model):
     '''Модель,отвечающая за характеристики машины'''
@@ -76,7 +79,7 @@ class NewUser(AbstractBaseUser,PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_activated_acc =models.BooleanField(default=False) # верификация по почте
     balance = models.PositiveBigIntegerField(default=0) # баланс юзера
-    products = models.ManyToManyField(Post,default=[],verbose_name='отношения постов к юзеру.')
+    products = models.ManyToManyField(Post,verbose_name='отношения постов к юзеру.',blank=True)
     activation_link = models.CharField(max_length=750,default='')
     objects = CustomAccountManager()
     

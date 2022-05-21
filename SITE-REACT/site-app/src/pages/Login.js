@@ -52,10 +52,10 @@ const Login = () => {
 
     const from = location?.state?.from?.pathname || '/'
 
-    const {setAuth } = useAuth()
+    const { auth,setAuth,persist_log,set_persist_log} = useAuth()
 
 
-    const url = `login/`
+
 
 
     const [password,setPassowrd] = useState('')
@@ -67,40 +67,42 @@ const Login = () => {
     const [errMSG,setErrMsg] = useState('')
     const errRef = useRef()
 
+    useEffect(() => {
+      set_persist_log(false)
+    },[])
     // add email useEffect
     useEffect(() => {
       setErrMsg('')
     },[username,password]) // deletes error message after every update of inputs
   
-
+    useEffect(() => {
+      localStorage.setItem("persist",persist_log)
+    },[persist_log])
 
   const handleSubmit = async(event) => {
     event.preventDefault();
-    if (username && password){
-        try{
-         await AxiosPrivate.post(url,{
+      try{
+        const url = `login/`
+        const res = await axiosInstance.post(url,{
           user_name : username,
           password : password,
-         },{withCredentials:true}).then((res) => {
-            localStorage.setItem('access_token',res.data.access)
-            localStorage.setItem('refresh_token',res.data.refresh)
-            const access_token = localStorage.getItem('access_token')
-            const refresh_token = localStorage.getItem('refresh_token')
-            AxiosPrivate.defaults.headers['Authorization'] = `JWT ${access_token}`
-            setAuth({user_name:username,refresh_token:refresh_token,access_token:access_token}) // изменяет auth
-            navigate(from,{replace:true})})}
-        catch(e){
-          if (e.response.data.length < 45){
-          setErrMsg(e.response.data)}
-          else{
-            setErrMsg('404,Something went wrong...')
-          }
+         },{
+            headers: { 'Content-Type': 'application/json' },
+            withCredentials: true
+         })
+         localStorage.setItem('refresh_token',res.data.refresh)
+         const access_token = res.data.access
+         const refresh_token = res.data.refresh
+         // AxiosPrivate.defaults.headers['Authorization'] = `JWT ${access_token}` - the 401 error caused this
+         setAuth(prev => {
+          return{...prev,user_name:username,refresh_token:refresh_token,access_token:access_token}
+         })
+         navigate(from,{replace:true})
+      }
+      catch(e){
+        setErrMsg(e.response.data)
       }
     }
-    else{
-      setErrMsg('Please fill all fields')
-    }
-  };
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
@@ -148,8 +150,12 @@ const Login = () => {
               onChange = {(e) => {setPassowrd(e.target.value)}}
             />
             <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
+              control={<Checkbox value="remember" color="primary" className="persistCheck" id='persist'/>}
               label="Remember me"
+              onChange={() => 
+                {set_persist_log(!persist_log)
+
+                }}
             />
              <p ref={errRef} className={errMSG ? "errmsg" : "offscreen"} aria-live="assertive">{errMSG}</p>
             <Button
