@@ -89,23 +89,28 @@ const Goods = () => {
   },[])
 
 
-    // массив,который кэшируется в памяти , выполняется при изменений категории.
 
-    
+
+    // временный массив для useMemo
+    const [tempPosts,settempPosts] = useState([])
+
+
+    // массив,который кэшируется в памяти , выполняется при изменений категории.
     const SortedPosts = useMemo(() => {
       let new_posts = []
       if(CurrentCategory && search.length<=2){
         // Сортируем по категории
-        const url = `posts_by_categories`
+        const url = `posts_by_categories/`
         const GetPostsByCats = async() => {
           const res = await axiosInstance.post(url,{
             category : CurrentCategory
           })
-          if (res.data.status === 200){
-            let posts = res.data
-            posts.map((post) => {
-              new_posts.push(post)
-            })
+          if (res.status === 200){
+           console.log(res.data)
+           settempPosts(res.data)
+          }
+          else{
+            settempPosts([])
           }
         }
         try{
@@ -115,64 +120,78 @@ const Goods = () => {
           console.error(e)
         }
         finally{
-          return new_posts
+          return tempPosts
         }
        }
        if(CurrentCategory && search.length>=3){
-        // когда по поиску и категориям
+         const url = `posts_by_category_and_search/`
+         const GetPostsByCatsAndSearch = async() => {
+            const res = await axiosInstance.post(url,{
+              search : search,
+              category : CurrentCategory
+            })
+            if (res.status === 200){
+              settempPosts(res.data)
+            }
+         }
+         try{
+           GetPostsByCatsAndSearch()
+         }
+         catch(e){
+           console.error(e)
+         }
+         finally{
+           return tempPosts
+         }
        }
+       return posts
     },[CurrentCategory,posts])
-    useEffect(() => {
+
+
+   useEffect(() => {
       const num = TotalPages(limit,allPosts)
       setallPages(num)
       
     },[posts,CurrentCategory])
+
+
     useEffect(() => {
       if(search.length >= 3 ){
         const GetPostsBySearch = async() => {
           const url = `search/posts/`
           const res = await axiosInstance.post(url,{
-            search:search
+            search : search
           })
-          if(res.data.status === 200){ 
+          if (res.status === 200){
+            console.log(res.data)
             setPosts(res.data)
           }
           else{
             setPosts([])
           }
         }
-        GetPostsBySearch()
+        try{
+          GetPostsBySearch()
+        }
+        catch(e){
+          console.error(e)
+        }
       }
       else{
         const PostBefore = async() =>{
-          if (CurrentCategory){
-            const url = `posts_by_categories/`
-            const res = await axiosInstance.post(url,{
-              category:CurrentCategory
-            })
-            if (res.data.status === 200){
-              setPosts(res.data)
-            }
-            else{
-              setPosts([])
-            }
-          }
-          else{
-            const url = `http://127.0.0.1:8000/getlistofposts/`
-            try{
-              await axios.get(url,{
-                params : {
-                  _page : Page,
-                }
-              }).then((response) => {
-                setPosts(response.data.results)
-              })
-            }
-            catch(err) {
-              console.error('Cant Fetch Posts')}
-            }
-          }
+          const url = `http://127.0.0.1:8000/getlistofposts/`
+          const res = await axios.get(url,{
+              params : {
+              _page : Page,
+            }})
+          setPosts(res.data.results)
+        }
+        try{
           PostBefore()
+        }
+        catch(e){
+          console.error(e)
+        }
       }
     },[search])
 
