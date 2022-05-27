@@ -13,15 +13,9 @@ import Mymodal from '../components/Mymodal'
 import SignIn from '../pages/Registrtation'
 
 const Main = () => {
-  const [modal,SetModal] = useState(false)
-
-  const OpenModal = () => {
-    SetModal(true)
-  }
   return (
-    <div>
-      
-  </div>
+    <div style={{'backgroundImage':'linear-gradient(#e66465, #9198e5)',height:100+'vh'}}>
+    </div>
   )
 }
 

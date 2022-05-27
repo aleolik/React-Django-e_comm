@@ -7,6 +7,7 @@ from rest_framework import serializers
 from .models import Post,Category,SizeCategory,NewUser
 from rest_framework_simplejwt.tokens import RefreshToken,TokenError
 class PostSerializer(serializers.ModelSerializer):
+     photo = serializers.ImageField(max_length=None, use_url=True, allow_null=False, required=True)
      class Meta:
         model = Post
         fields = ['name','photo','body','price','item_count','id','category','size_category']

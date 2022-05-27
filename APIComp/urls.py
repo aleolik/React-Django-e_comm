@@ -26,7 +26,7 @@ urlpatterns = [
 
 
     #get posts by categories
-    path('posts_by_categories/',views.Get_posts_by_categories.as_view(),name='posts_by_categoreis'),
+    path('posts_by_categories/',views.Get_posts_by_category.as_view(),name='posts_by_categoreis'),
 
     # Admin Only
     # get list of users
@@ -35,14 +35,13 @@ urlpatterns = [
     # token data 
     path('token/access_data/',views.GetTokenData.as_view(),name='access-data'),
 
-    #filter categories by search title
-    path('filter_posts/',views.FilterPost.as_view(),name='filter_posts'),
 
     #changeUserActivationLink
     path('activate/user/',views.ActivateUser.as_view(),name='activate-user'),
 
     #search_posts
     path('search/posts/',views.SearchPosts.as_view(),name='search-posts'),
+    path('posts_by_category_and_search/',views.GetPostsByCategoryAndSearch.as_view(),name='posts_by_category_and_search'),
 
     #user opertains
     path('add_post_to_cart/',views.AddPostToCart.as_view(),name='add_to_bucket'),

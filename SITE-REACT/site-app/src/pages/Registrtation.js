@@ -83,9 +83,6 @@ export default function SignIn() {
   
   const email_input =document.getElementById('email')
 
-  useEffect(() => { // focus on username input
-    usernameRef.current.focus() // REF - input name
-  },[])
 
   useEffect(() => {
     const result = USER_REGEX.test(username)
@@ -147,7 +144,7 @@ export default function SignIn() {
 };
   return (
 
-    <div>
+    <div style={{'backgroundImage':'linear-gradient(#e66465, #9198e5)',height:100+'vh','paddingTop':5+'%'}}>
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />

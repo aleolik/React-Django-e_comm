@@ -17,7 +17,6 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { setRef } from '@mui/material';
 
 import { jsx } from '@emotion/react';
 
@@ -104,6 +103,7 @@ const Login = () => {
       }
     }
   return (
+    <div style={{'backgroundImage':'linear-gradient(#e66465, #9198e5)',height:100+'vh','paddingTop':5+'%'}}>
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
@@ -185,6 +185,7 @@ const Login = () => {
         </Box>
       </Container>
     </ThemeProvider>
+  </div>
   );
 }
 

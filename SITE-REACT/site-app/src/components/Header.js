@@ -21,6 +21,11 @@ import SignIn from '../pages/Registrtation'
 import RenderPosts from './RenderPosts'
 import { setRef } from '@mui/material'
 
+import cl from '../components/css/Header.module.css'
+
+import {GrClose} from 'react-icons/gr'
+
+import logo from '../static/logo.png'
 const Header = () => {
 
   const [modal,SetModal] = useState(false)
@@ -31,11 +36,8 @@ const Header = () => {
   
   const {setAuth} = useAuth()
 
-  const [search,SetSearch] = useState('')
 
-  const searchRef = useRef(false)
-
-  const [search_focus,setSearchfocus] = useState(false)
+  const [render_searched_categories,set_render_searched_categories] = useState(false)
 
   // global
 
@@ -62,9 +64,10 @@ const Header = () => {
   let [IsLogged,SetIsLogged] = useState('false')
 
 
+  
   return (
     <div>
-    <nav className="navbar navbar-expand-xl navbar-dark bg-dark">
+   <nav className="navbar navbar-expand-xl navbar-dark bg-dark">
       <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
         <span className="navbar-toggler-icon"></span>
       </button>
@@ -97,15 +100,6 @@ const Header = () => {
             <NavLink className="nav-link" to="/mygoods">My goods</NavLink>
           </li>
         </ul>
-        <form className="form-inline my-2 my-lg-0">
-          <input className="form-control mr-sm-2" type="search" placeholder="Type at least 3 symbols" aria-label="Search"
-          onChange={(e) => SetSearch(e.target.value)}
-          ref={searchRef}
-          onFocus = {() => setSearchfocus(true)}
-          onBlur = {() => setSearchfocus(false)}
-          />
-          <button className="btn btn-primary" type="submit" onSubmit={() => console.log('submit')}>Search</button>
-        </form>
         <Mymodal modal={modal} SetModal={SetModal}>
          <SignIn/>
         </Mymodal>

@@ -20,12 +20,15 @@ const PostPage = () => {
  const [post,setpost] = useState({})
 
   const basemedia = "http://127.0.0.1:8000/media/"
+
   const [error,seterror] = useState(false)
+
   const [result,setresult] = useState(false)
 
  useEffect(() =>{
     const GetPost = async() => {
         const url = `getlistofposts/`
+        try{
         const data = await axiosinstance.post(url,{
             'name':params.name
         }).then((res) => res.data[0])
@@ -37,11 +40,12 @@ const PostPage = () => {
         })
         if (data){
             setresult(true)
+        }}
+        catch(e){
+            seterror(true)
         }
       }
-      GetPost().catch((e) => {
-        seterror(true)
-      })
+      GetPost()
   },[])
  const [modal,Setmodal] = useState(false)
 
@@ -76,7 +80,7 @@ const location = useLocation()
   
   let  user_name = auth?.user_name || ''
   return (
-    <div>
+    <div style={{'height':"120vh",'backgroundImage':'linear-gradient(#e66465, #9198e5)'}}>
         {gotoLogin && <Navigate to='/login'></Navigate>}
         {result &&
 
@@ -84,13 +88,13 @@ const location = useLocation()
                 <Mymodal modal={modal} SetModal={Setmodal}>
                     <Login/>
                 </Mymodal>
-                <div className=''>
-                    <div className='container border'>
-                            <div style={{'maxWidth':2000+'px'}} className=''>
+                <div>
+                    <div className='container'>
+                            <div style={{'maxWidth':2000+'px'}}>
                                 <h1>{post.name}</h1>
                                 <h5>Описание :{post.body}</h5>
                             </div>
-                            <div style={{'maxWidth':600+'px'}} className=''>
+                            <div style={{'maxWidth':600+'px'}}>
                                 <img className="card-img-top" src={basemedia+post.photo} alt="is loading..."/>
                             </div>
                             <button className='btn btn-success' onClick={() => Buying()}>Купить</button>

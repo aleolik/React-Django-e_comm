@@ -1,5 +1,6 @@
 
 
+
 from django.http import JsonResponse
 from requests import request
 from rest_framework import authentication
@@ -8,6 +9,7 @@ from rest_framework_simplejwt.tokens import RefreshToken,AccessToken
 from django.middleware import csrf
 from django.contrib.auth import authenticate
 from rest_framework import generics
+from urllib3 import Retry
 from .models import NewUser, Post,Category,SizeCategory, User
 from .serailizers import PostSerializer,CategorySerializer,SizeCategorySeializers,Postsbycategories,GetUsersSerializer,LogoutSerializer,ChangeUserSerializer
 from rest_framework.permissions import AllowAny,IsAuthenticated
@@ -24,15 +26,20 @@ from django_filters import rest_framework as filters
 
 from django.db.models import Q
 
+from rest_framework.pagination import PageNumberPagination
 
+#Paginators
 
-
+class PostsPagination(PageNumberPagination):
+    page_size = 25
+    page_size_query_param = 'page_size'
+    max_page_size = 25
 #PRODUCT OPERATIONS
 class ListOfPosts(generics.ListCreateAPIView):
     '''Создание нового поста или получение всех существующих постов'''
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    
+    pagination_class = PostsPagination
     def post(self,request):
         name = request.data['name']
         if name:
@@ -218,18 +225,17 @@ class Logout(APIView):
             return Response(str(e))
 
 
-class  Get_posts_by_categories(ListAPIView):
-    '''Получает посты по критериям'''
-    permission_classes = [AllowAny,]
-    serializer_class = Postsbycategories
-
-    def get_queryset(self,request):
+class Get_posts_by_category(APIView):
+    def post(self,request):
         category = request.data['category']
-
-        posts = Post.objects.filter(category=category)
-
-        return posts
-
+        if category:
+            category_posts = Post.objects.filter(category_id=category)
+            if category_posts:
+                posts = PostSerializer(category_posts,many=True,context={'request':request}).data
+                return Response(posts,status=status.HTTP_200_OK)
+            return Response('No posts to category',status=status.HTTP_204_NO_CONTENT)
+        return Response('Category is not found',status=status.HTTP_204_NO_CONTENT)
+    
 
 class GetUsers(ListAPIView):
     '''Получает всех юзеров,записанных в БД'''
@@ -239,30 +245,6 @@ class GetUsers(ListAPIView):
 
 
 
-# filter posts by name
-class FilterPost(APIView):
-    serializer_class = PostSerializer
-
-    filter_backends = (DjangoFilterBackend)
-    def post(self,request):
-        name_search  = request.data['name_search']
-        if name_search:
-            posts = Post.objects.filter(name__contains=name_search).values()
-            return Response(posts)
-        return Response('Нет категории,соотвествующих вашему запросу')
-
-# filter posts by user
-class FilterPostsByUser(APIView):
-    '''Posts that 1 user bought'''
-    serializer_class = PostSerializer
-
-    filter_backends = (DjangoFilterBackend)
-    def post(self,request):
-        user  = request.data['user']
-        if user:
-            posts = Post.objects.filter(user=user).values()
-            return Response({'posts':posts})
-        return Response('Нет категории,соотвествующих вашему запросу')
 
 
 
@@ -285,15 +267,17 @@ class ActivateUser(APIView):
 
 class SearchPosts(APIView):
     '''Gets data from search bar to filter posts elements'''
-    def get(self,request):
-        search = request.data['search']
+    def post(self,request):
+        search = request.data['search'] # не устойчиво к регистру.(можно создавать пост с помощью капиталайз)
         if search:
             searched_posts = Post.objects.filter(
-                Q(name__icontains = search) |
-                Q(body__icontains = search)
-            ).values()
-            return Response(searched_posts)
-        return Response('Search bar is empty!Please input something')
+                name__icontains = search
+            )
+            if searched_posts:
+                posts = PostSerializer(searched_posts,many=True,context={'request':request}).data
+                return Response(posts)
+            return Response(f"Did'nt find anything to input --  {search}",status=status.HTTP_204_NO_CONTENT)
+        return Response('Search bar is empty!Please input something',status=status.HTTP_204_NO_CONTENT)
 
 
 class AddPostToCart(APIView):
@@ -321,7 +305,25 @@ class GetUserCart(APIView):
         if user_name:
             user = NewUser.objects.filter(user_name=user_name).first()
             if user:
-                products = user.products.all().values()
-                return Response(products)
+                found_posts = user.products.all()
+                if found_posts:
+                    posts = PostSerializer(found_posts,many=True,context={'request':request}).data
+                    return Response(posts)
             return Response('User with this username does not exist!',status=status.HTTP_400_BAD_REQUEST)
         return Response('please select user!',status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+class GetPostsByCategoryAndSearch(APIView):
+    def post(self,request):
+        search = request.data['search']
+        cateogry = request.data['category']
+        if search and cateogry:
+            found_posts = Post.objects.filter(category_id=cateogry,name__icontains = search)
+            if found_posts:
+                posts = PostSerializer(found_posts,many=True,context={'request':request}).data
+                return Response(posts,status=status.HTTP_200_OK)
+            return Response('cant found posts to chosen category',status=status.HTTP_204_NO_CONTENT)
+            
+        return Response('no search or category',status=status.HTTP_204_NO_CONTENT)
