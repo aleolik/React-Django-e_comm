@@ -2,7 +2,7 @@
 
 
 from django.http import JsonResponse
-from requests import request
+from requests import post, request
 from rest_framework import authentication
 from urllib import response
 from rest_framework_simplejwt.tokens import RefreshToken,AccessToken
@@ -225,17 +225,24 @@ class Logout(APIView):
             return Response(str(e))
 
 
-class Get_posts_by_category(APIView):
-    def post(self,request):
-        category = request.data['category']
+
+class Get_posts_by_category(ListAPIView):
+    pagination_class = PostsPagination
+    def get(self,request):
+        category = request.query_params["category"]
         if category:
-            category_posts = Post.objects.filter(category_id=category)
-            if category_posts:
-                posts = PostSerializer(category_posts,many=True,context={'request':request}).data
-                return Response(posts,status=status.HTTP_200_OK)
+            posts = Post.objects.filter(category_id=category)         
+            paginated_posts = self.paginate_queryset(posts)
+            if paginated_posts:
+                returned_posts = PostSerializer(paginated_posts,many=True,context={'request':request}).data
+                return Response(returned_posts,status=status.HTTP_200_OK)
             return Response('No posts to category',status=status.HTTP_204_NO_CONTENT)
         return Response('Category is not found',status=status.HTTP_204_NO_CONTENT)
-    
+
+
+
+
+
 
 class GetUsers(ListAPIView):
     '''Получает всех юзеров,записанных в БД'''

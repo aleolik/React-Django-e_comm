@@ -41,7 +41,6 @@ const Goods = () => {
   const [allPosts,SetallPosts] = useState(0)
 
 
-
   const [CurrentCategory,SetCurrentCategory] = useState('')
 
   const [search,SetSearch] = useState('')
@@ -59,6 +58,8 @@ const Goods = () => {
 
   const [limit,setlimit ] = useState(25)
 
+  
+
   useEffect(() => {
     const PostBefore = async() =>{
       const url = `http://127.0.0.1:8000/getlistofposts/`
@@ -74,7 +75,7 @@ const Goods = () => {
   const RenderPosts = async() => {
       try{
         SetIsloading(true)
-        await PostBefore()
+          await PostBefore()
       }
       catch(e){
         seterrMsg('error',e.message)
@@ -85,32 +86,31 @@ const Goods = () => {
     }
   RenderPosts()
 
-  // search and categories temp storage
   },[])
 
 
 
 
     // временный массив для useMemo
-    const [tempPosts,settempPosts] = useState([])
+    const [SortedPosts,setSortedPosts] = useState([])
 
 
     // массив,который кэшируется в памяти , выполняется при изменений категории.
-    const SortedPosts = useMemo(() => {
-      let new_posts = []
+    useEffect(() => {
       if(CurrentCategory && search.length<=2){
         // Сортируем по категории
         const url = `posts_by_categories/`
         const GetPostsByCats = async() => {
-          const res = await axiosInstance.post(url,{
-            category : CurrentCategory
+          const res = await axiosInstance.get(url,{
+              params : {
+                category : CurrentCategory
+              }
           })
           if (res.status === 200){
-           console.log(res.data)
-           settempPosts(res.data)
+            setSortedPosts(res.data)
           }
           else{
-            settempPosts([])
+            setSortedPosts([])
           }
         }
         try{
@@ -118,9 +118,6 @@ const Goods = () => {
         }
         catch(e){
           console.error(e)
-        }
-        finally{
-          return tempPosts
         }
        }
        if(CurrentCategory && search.length>=3){
@@ -131,7 +128,10 @@ const Goods = () => {
               category : CurrentCategory
             })
             if (res.status === 200){
-              settempPosts(res.data)
+              setSortedPosts(res.data)
+            }
+            else{
+              setSortedPosts([])
             }
          }
          try{
@@ -140,11 +140,13 @@ const Goods = () => {
          catch(e){
            console.error(e)
          }
-         finally{
-           return tempPosts
-         }
        }
-       return posts
+       if (!CurrentCategory && !search){
+        setSortedPosts(posts)
+       }
+       if (search && !CurrentCategory){
+         setSortedPosts(posts)
+       }
     },[CurrentCategory,posts])
 
 
@@ -163,7 +165,6 @@ const Goods = () => {
             search : search
           })
           if (res.status === 200){
-            console.log(res.data)
             setPosts(res.data)
           }
           else{
@@ -180,10 +181,7 @@ const Goods = () => {
       else{
         const PostBefore = async() =>{
           const url = `http://127.0.0.1:8000/getlistofposts/`
-          const res = await axios.get(url,{
-              params : {
-              _page : Page,
-            }})
+          const res = await axios.get(url)
           setPosts(res.data.results)
         }
         try{
@@ -195,8 +193,7 @@ const Goods = () => {
       }
     },[search])
 
-  // const layout_height = 100 + 1 * SortedPosts.length
-   const layout_height = 100
+  const layout_height = 100 + 1 * SortedPosts.length
 
   return (
     <div className='container-fluid' style={{'backgroundImage':'linear-gradient(#e66465, #9198e5)','height':layout_height+'vh'}}>

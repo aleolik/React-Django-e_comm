@@ -31,14 +31,14 @@ const RenderPosts = (props) => {
             {posts.length===0 && search.length >=3  && 
             <h1 style={{'fontFamily':'Impact, fantasy'}}>{MsgEmptyData}</h1>
             }
-            <div className='row' style={{'width':95+'%'}}>
+            <div className='row' style={{'width':70+'%'}}>
             {posts.map((post) => {
             const post_link = `post/${post.name}`
             return(
                 <div className='col-xs-12 col-sm-2' key={post.id}>
                 <div key={post.id}>
                     <div className='card bg-primary mb-1'>
-                    <img className="img-card" src={post.photo}alt="is loading..." style={{'maxWidth':300+'px','maxHeight':300+'px'}}/>
+                    <img className="img-card" src={post.photo}alt="is loading..."/>
                     <div className='card-content'><Link to={post_link}><h5 class="card-header" style={{'color':'white'}}>{post.name}</h5></Link>
                         <div className="card-title" style={{'color':'white'}}>
                                 { post.body.length > body_length 
