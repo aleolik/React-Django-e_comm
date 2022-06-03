@@ -19,13 +19,18 @@ import Mymodal from '../components/Mymodal'
 import SignIn from '../pages/Registrtation'
 
 import RenderPosts from './RenderPosts'
-import { setRef } from '@mui/material'
+import { IconButton, setRef, Toolbar, Typography } from '@mui/material'
 
 import cl from '../components/css/Header.module.css'
 
 import {GrClose} from 'react-icons/gr'
 
 import logo from '../static/logo.png'
+
+
+import { AppBar } from '@mui/material'
+
+import LogoutIcon from '@mui/icons-material/Logout';
 const Header = () => {
 
   const [modal,SetModal] = useState(false)
@@ -66,46 +71,22 @@ const Header = () => {
 
   
   return (
-    <div>
-   <nav className="navbar navbar-expand-xl navbar-dark bg-dark">
-      <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
-        <span className="navbar-toggler-icon"></span>
-      </button>
-      <NavLink className="navbar-brand" to="/">Navbar</NavLink>
-      <div className="collapse navbar-collapse" id="navbarTogglerDemo03">
-        <ul className="navbar-nav mr-auto mt-2 mt-lg-0">
-          {auth.access_token && auth.refresh_token ? (
-          <div>
-              <li className="nav-item">
-              <NavLink  className="nav-link" to={<Outlet/>} onClick={UserLogout}>Logout</NavLink>
-              </li>
-          </div> )
-          : (
-            <li className="nav-item">
-              <NavLink className="nav-link" to="/login">Login</NavLink>
-            </li>)}
-          <li className="nav-item">
-            <NavLink  className="nav-link" to="/posts" >Goods</NavLink>
-          </li>
-          <li className="nav-item">
-            <NavLink className="nav-link " to="/about">About us</NavLink>
-          </li>
-          <li className="nav-item">
-            <NavLink to='/register' className='nav-link'>Registration</NavLink>
-          </li>
-          <li className="nav-item" >
-            <NavLink className="nav-link" to="/admin">Admin Page</NavLink>
-          </li>
-          <li className="nav-item" >
-            <NavLink className="nav-link" to="/mygoods">My goods</NavLink>
-          </li>
-        </ul>
-        <Mymodal modal={modal} SetModal={SetModal}>
-         <SignIn/>
-        </Mymodal>
-      </div>
-    </nav>
-  </div>
+    <AppBar position="static">
+        <Toolbar>
+          <Typography
+          variant='h6'
+          component="span"
+          sx = {{ flexGrow : 1}}
+          >
+          Navbar
+          </Typography>
+          <IconButton
+            color='inherit'
+          >
+            <LogoutIcon></LogoutIcon>
+          </IconButton>
+        </Toolbar>
+    </AppBar>
   )
 }
 

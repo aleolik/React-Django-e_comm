@@ -19,6 +19,8 @@ const RenderPosts = (props) => {
 
     const allpages = props.allPages
     
+    const setPage = props.setPage
+
 
     const MsgEmptyData = `Nothing found to search : ${search}`
 
@@ -29,7 +31,7 @@ const RenderPosts = (props) => {
     return(
         <div className>
             {posts.length===0 && search.length >=3  && 
-            <h1 style={{'fontFamily':'Impact, fantasy'}}>{MsgEmptyData}</h1>
+            <h1 style={{'fontFamily':'Impact, fantasy','color':'white'}}>{MsgEmptyData}</h1>
             }
             <div className='row' style={{'width':70+'%'}}>
             {posts.map((post) => {
@@ -51,14 +53,14 @@ const RenderPosts = (props) => {
                         </div>      </div>                  
                         <div className="card-read-more">
                             <h4 className="font-italic">{post.price}<FaHryvnia style={{'width':10+'%','paddingTop':3+'px'}}/></h4>
-                            <Link to={post_link}><button className='btn btn-info'>Узнать больше</button></Link>
+                            <Link to={post_link}><button className='btn-selfmade' onClick={() => SetCurrentCategory('')}><span>Узнать больше</span><i></i></button></Link>
                         </div>                          
                     </div>
                 </div>
         </div>
         )})}
-            </div>
-            <PaginationSelector page={page} allPages={allpages}/>
+        </div>
+             <PaginationSelector page={page} allPages={allpages} setPage={setPage}/>
         </div>
     )
 }

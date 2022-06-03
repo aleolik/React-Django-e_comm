@@ -8,7 +8,7 @@ const CategoryItem = (props) => {
 
     return(
         <div>
-            <button className='btn btn-primary' onClick={() => SetCurrentCategory(category.id)}>{category.title}</button>
+            <button className='btn-selfmade-blue' onClick={() => SetCurrentCategory(category.id)}><span>{category.title}</span><i></i></button>
         </div>
     )
 }

@@ -36,7 +36,7 @@ const Users = () => {
       try{
         const response = await AxiosPrivate.get(url,{
           signal : controller.signal})
-          IsMounted && SetUsers(response.data);
+          IsMounted && SetUsers(response.data.results);
       }
       catch (err) {
           console.error(err)

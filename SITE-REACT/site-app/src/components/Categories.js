@@ -12,7 +12,11 @@ const Categories = (props) => {
   const url = `http://127.0.0.1:8000/getlistcategories/`
   useEffect(() => {
     const GetCats = async() => {
-        await axios.get(url).then((response) => {Setcateogries(response.data)})
+        await axios.get(url,{
+          params : {
+            _page : 1,
+          }
+        }).then((response) => {Setcateogries(response.data.results)})
         return categories
     }
     GetCats()

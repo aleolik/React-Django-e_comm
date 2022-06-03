@@ -2,8 +2,6 @@ import React, { useEffect, useMemo, useState,useRef} from 'react'
 
 import axios from 'axios'
 
-import photo from '../static/background.jpg'
-
 import useAuth from '../hooks/useAuth'
 
 import Categories from '../components/Categories'
@@ -21,6 +19,11 @@ import Loader from '../components/Loader'
 import PaginationSelector from '../components/PaginationSelector'
 
 import TotalPages from '../components/TotalPages'
+
+import SearchAndFilter from '../hooks/SearchAndFilter'
+
+import photo from '../static/dark_bg.jpg'
+import { TextField } from '@mui/material'
 const Goods = () => {
 
     const [posts,setPosts] = useState([]);
@@ -56,10 +59,12 @@ const Goods = () => {
 
   const [allPages,setallPages] = useState(0)
 
-  const [limit,setlimit ] = useState(25)
+  const [limit,setlimit ] = useState(3) // needs to be same as in settings
 
-  
-
+  const changePosts_and_allPosts = async(results=[],count=1) => {
+   SetallPosts(count)
+   setSortedPosts(results)
+  }
   useEffect(() => {
     const PostBefore = async() =>{
       const url = `http://127.0.0.1:8000/getlistofposts/`
@@ -89,83 +94,89 @@ const Goods = () => {
   },[])
 
 
-
-
     // временный массив для useMemo
     const [SortedPosts,setSortedPosts] = useState([])
 
 
     // массив,который кэшируется в памяти , выполняется при изменений категории.
     useEffect(() => {
-      if(CurrentCategory && search.length<=2){
-        // Сортируем по категории
-        const url = `posts_by_categories/`
-        const GetPostsByCats = async() => {
-          const res = await axiosInstance.get(url,{
-              params : {
-                category : CurrentCategory
-              }
-          })
-          if (res.status === 200){
-            setSortedPosts(res.data)
-          }
-          else{
-            setSortedPosts([])
-          }
+      // не категории,ни сёрч
+      if (!CurrentCategory && search.length <= 3){
+        const GetDataMainPage = async () => {
+          const res = await SearchAndFilter(Page,'getlistofposts/','','','',SetIsloading)
+          await changePosts_and_allPosts(res[1],res[0])
         }
         try{
-          GetPostsByCats()
+          GetDataMainPage()
         }
         catch(e){
           console.error(e)
         }
+      }
+      // если категории выбраны
+      if(CurrentCategory && search.length<=2){
+        // Сортируем по категории
+        const GetPostsByCats = async() => {
+          const res = await SearchAndFilter(Page,'posts_by_categories/','','',CurrentCategory)
+          await changePosts_and_allPosts (res[1],res[0])
+        }
+        GetPostsByCats()
        }
-       if(CurrentCategory && search.length>=3){
-         const url = `posts_by_category_and_search/`
-         const GetPostsByCatsAndSearch = async() => {
-            const res = await axiosInstance.post(url,{
-              search : search,
-              category : CurrentCategory
-            })
-            if (res.status === 200){
-              setSortedPosts(res.data)
+       // еслт поиск и категории выбраны
+       if(CurrentCategory && search.length>2){
+        const GetPostsByCats = async() => {
+          const res = await SearchAndFilter(Page,'posts_by_category_and_search/','',search,CurrentCategory)
+          await changePosts_and_allPosts (res[1],res[0])
+        }
+        GetPostsByCats()
+       }
+       // если поиск,но категории не выбраны
+       if (search.length >= 3 && !CurrentCategory){
+         const GetDatabySearch = async() => {
+           const url = `http://127.0.0.1:8000/search/posts/`
+           const res = await axiosInstance.get(url,{
+             params : {
+               search : search,
+               page : Page
+             }
+          })
+          if (res.status === 200){
+            await changePosts_and_allPosts(res.data.results,res.data.count)
             }
-            else{
-              setSortedPosts([])
-            }
+          else{
+            await changePosts_and_allPosts()
+          }
          }
-         try{
-           GetPostsByCatsAndSearch()
-         }
-         catch(e){
-           console.error(e)
-         }
+         GetDatabySearch()
        }
-       if (!CurrentCategory && !search){
-        setSortedPosts(posts)
-       }
-       if (search && !CurrentCategory){
-         setSortedPosts(posts)
-       }
-    },[CurrentCategory,posts])
+    },[CurrentCategory,posts,Page])
 
 
    useEffect(() => {
-      const num = TotalPages(limit,allPosts)
-      setallPages(num)
-      
-    },[posts,CurrentCategory])
+      const ChangePaginationSelection = async() => {
+        setPage(1)
+        const num = TotalPages(limit,allPosts)
+        setallPages(num)
+      }
+      ChangePaginationSelection()
+    },[allPosts])
 
 
     useEffect(() => {
       if(search.length >= 3 ){
         const GetPostsBySearch = async() => {
           const url = `search/posts/`
-          const res = await axiosInstance.post(url,{
-            search : search
+          const res = await axiosInstance.get(url,{
+            params : {
+              search : search
+            }
+          }).catch((e) => {
+            setPosts([])
+            console.error(e, '-errrrrr')
           })
           if (res.status === 200){
-            setPosts(res.data)
+            setPosts(res.data.results)
+            SetallPosts(res.data.count)
           }
           else{
             setPosts([])
@@ -193,26 +204,26 @@ const Goods = () => {
       }
     },[search])
 
-  const layout_height = 100 + 1 * SortedPosts.length
+  const layout_height = 100 + 2 * SortedPosts.length
 
   return (
-    <div className='container-fluid' style={{'backgroundImage':'linear-gradient(#e66465, #9198e5)','height':layout_height+'vh'}}>
+    <div className='container-fluid' style={{'backgroundImage':`url(${photo})`,'height':layout_height+'vh'}}>
       {isLoading 
       ? (<div className='d-flex align-items-center justify-content-center' style={{'paddingTop':20+'%'}}><Loader/></div>)
       : (
         <div>
         <div className='.col-6 .col-md-4' >
           <div> 
-            <button className='btn btn-primary' onClick={() => SetCurrentCategory('')}>All</button>
+            <button className='btn-selfmade' onClick={() => SetCurrentCategory('')}><span>All</span><i></i></button>
             <Categories SetCurrentCategory={SetCurrentCategory}/>
           </div>
         </div>
           <div className='content'>
-              <div className='container' style={{'paddingTop':3+'%'}}><RenderPosts posts={SortedPosts} search={search} page={Page} allPages={allPages}/></div>
+              <div className='container' style={{'paddingTop':3+'%'}}><RenderPosts setPage={setPage} posts={SortedPosts} search={search} page={Page} allPages={allPages} /></div>
               <div className='container'>
                   <form className="form-inline my-2 my-lg-0">
                       <button className='btn btn-warning'>Соритровать по :</button>
-                      <input className="form-control mr-sm-2 " type="search" placeholder="Type at least 3 symbols" aria-label="Search"
+                      <TextField  label='search' variant='outlined' type="search" placeholder="Type at least 3 symbols" aria-label="Search"
                       onChange={(e) => SetSearch(e.target.value)}
                       ref={searchRef}
                       onFocus = {() => setSearchfocus(true)}

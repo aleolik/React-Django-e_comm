@@ -14,14 +14,23 @@ import {FaHryvnia} from 'react-icons/fa'
 import Loader from '../components/Loader'
 
 import useFetching from '../hooks/useFetching'
+
+import SearchAndFilter from '../hooks/SearchAndFilter'
+
+import PaginationSelector from '../components/PaginationSelector'
+
+import TotalPages from '../components/TotalPages'
+
+
+import photo from '../static/goods_bg.jpg'
 const Mygoods = () => {
 
   const { auth } = useAuth()
 
-  const user_name = auth.user_name || ''
+  let user_name = auth.user_name || ''
 
 
-  const url = `get_user_cart/`
+  let url = `get_user_cart/`
 
   const [CartItems,setCartItems] = useState([])
 
@@ -35,21 +44,27 @@ const Mygoods = () => {
 
   const [errMsg,SeterrMsg] = useState('')
 
+  const [Page,setPage] = useState(1)
+
+  const [count,setcount] = useState(1)
+
   const body_length = 50
+
+  const limit = 3
   useEffect(() => {
-      const GetItemInCart = async() => {;
-        await axiosPrivate.post(url,{
-          user_name:user_name
-        }).then((res) => {
-          setCartItems(res.data)})
-          .catch((err) => {
-            console.error(err)
-            navigate('/login',{state : {from : location},replace:true})
-          })
+      const GetItemInCart = async() => {
+        try{
+          const res = await SearchAndFilter(Page,url,user_name)
+          setCartItems(res[1])
+          setcount(TotalPages(limit,res[0]))
+        }
+        catch(e){
+          console.error(e)
+        }
     }
     const RenderPosts = async() => {
       try{
-          await GetItemInCart()
+          GetItemInCart()
       }
       catch(e){
         SeterrMsg(e.message)
@@ -62,15 +77,15 @@ const Mygoods = () => {
   },[])
   let num_height = 100
   if (!isPostsLoading){
-     num_height = 100 + CartItems.length * 15
+     num_height = 100 + CartItems.length * 20
   }
   return(
-    <div className='container-fluid d-flex align-items-center justify-content-center' style={{'height':num_height+'vh','backgroundImage':'linear-gradient(#e66465, #9198e5)'}} >
+    <div className='container-fluid d-flex align-items-center justify-content-center' style={{'height':num_height+'vh','backgroundImage':`url(${photo})`}} >
       {isPostsLoading
       ? (<Loader/>)
       : (CartItems.length > 0
         ? (<div>
-          <div style={{'paddingLeft':40+'px'}}>
+          <div style={{'paddingLeft':40+'px','paddingTop':20+'%'}}>
             <button className='btn btn-warning'>Корзина</button>
             <button className='btn btn-success'>В процессе</button>
             </div>
@@ -93,13 +108,14 @@ const Mygoods = () => {
                     </div>      </div>                  
                     <div className="card-read-more">
                         <h4 className="font-italic">{post.price}<FaHryvnia style={{'width':10+'%','paddingTop':3+'px'}}/></h4>
-                        <a href={post_link}><button className='btn btn-info'>Узнать больше</button></a>
+                        <a href={post_link}><button className='btn btn-success'>Купить</button></a>
                     </div>                          
                 </div>
             </div>
           </div>
            )
          })}
+        <PaginationSelector page={Page} setPage={setPage} allPages={count} />
         </div>)
         : (  <div>
           <h1>Your cart is empty!</h1>

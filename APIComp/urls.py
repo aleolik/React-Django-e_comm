@@ -9,7 +9,6 @@ urlpatterns = [
 
     #posts
     path('getlistofposts/',views.ListOfPosts.as_view(),name='listofposts'),
-    path('changelistofposts/<int:pk>/',views.PutDeleteGetPosts.as_view(),name='changeposts'),
 
     #post categories
     path('getlistcategories/',views.GetCreateCategory.as_view(),name='listofcateogires'),

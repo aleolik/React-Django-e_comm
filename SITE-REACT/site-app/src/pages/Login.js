@@ -27,6 +27,8 @@ import AxiosPrivate from '../axiosinstance'
 
 import useAuth from '../hooks/useAuth';
 
+
+import photo from '../static/goods_bg.jpg'
 function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
@@ -103,7 +105,7 @@ const Login = () => {
       }
     }
   return (
-    <div style={{'backgroundImage':'linear-gradient(#e66465, #9198e5)',height:100+'vh','paddingTop':5+'%'}}>
+    <div style={{'backgroundImage':`url(${photo})`,height:100+'vh','paddingTop':5+'%'}}>
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />

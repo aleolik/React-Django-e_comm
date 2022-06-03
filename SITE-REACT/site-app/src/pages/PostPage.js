@@ -14,6 +14,7 @@ import Mymodal from '../components/Mymodal'
 
 import Login from '../pages/Login'
 
+import photo from '../static/goods_bg.jpg'
 const PostPage = () => {
  const params = useParams() // параметры в url строке
  
@@ -80,7 +81,7 @@ const location = useLocation()
   
   let  user_name = auth?.user_name || ''
   return (
-    <div style={{'height':"120vh",'backgroundImage':'linear-gradient(#e66465, #9198e5)'}}>
+    <div style={{'height':"120vh",'backgroundImage':`url(${photo})`,'paddingBottom':20+'%'}} className='container-fluid d-flex align-items-center justify-content-center'>
         {gotoLogin && <Navigate to='/login'></Navigate>}
         {result &&
 
@@ -89,7 +90,7 @@ const location = useLocation()
                     <Login/>
                 </Mymodal>
                 <div>
-                    <div className='container'>
+                    <div className>
                             <div style={{'maxWidth':2000+'px'}}>
                                 <h1>{post.name}</h1>
                                 <h5>Описание :{post.body}</h5>
