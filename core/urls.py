@@ -12,6 +12,7 @@ from django.urls import path,include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',include('APIComp.urls')),
+    path('',include('PayPal.urls')),
     path('token/refresh/',TokenRefreshView.as_view()) # new access and ref tokens
 ]
 

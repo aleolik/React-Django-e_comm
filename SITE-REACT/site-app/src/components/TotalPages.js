@@ -1,6 +1,6 @@
 import React from 'react'
 
-const TotalPages = (limit=3,totalposts=[]) => {
+const TotalPages = (limit=12,totalposts=[]) => {
    const pages = Math.ceil(totalposts / limit)
    return(
         pages

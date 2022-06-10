@@ -16,9 +16,6 @@ const Notfoundpage = () => {
         <OrbitControls enableZoom={false}/>
         <ambientLight intensity={0.3}></ambientLight>
         <directionalLight position={[-2,5,2]} intensity={1}></directionalLight>
-        <Suspense fallback={false}>
-          <Drone/>
-        </Suspense>
       </Canvas>
     </div>
   )

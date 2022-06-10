@@ -1,5 +1,5 @@
 import React, { useState,createContext, useEffect, useRef} from 'react'
-import { Link, Outlet } from 'react-router-dom'
+import { Link, Outlet, useNavigate } from 'react-router-dom'
 
 import {useContext} from 'react'
 
@@ -12,14 +12,13 @@ import useAuth from '../hooks/useAuth'
 
 import { AxiosPrivate } from '../axiosinstance'
 
-import { Navigate } from 'react-router-dom'
 
 import Mymodal from '../components/Mymodal'
 
 import SignIn from '../pages/Registrtation'
 
 import RenderPosts from './RenderPosts'
-import { IconButton, setRef, Toolbar, Typography } from '@mui/material'
+import { Button, IconButton, setRef, Toolbar, Typography } from '@mui/material'
 
 import cl from '../components/css/Header.module.css'
 
@@ -31,6 +30,9 @@ import logo from '../static/logo.png'
 import { AppBar } from '@mui/material'
 
 import LogoutIcon from '@mui/icons-material/Logout';
+
+import LoginIcon from '@mui/icons-material/Login';
+
 const Header = () => {
 
   const [modal,SetModal] = useState(false)
@@ -68,23 +70,55 @@ const Header = () => {
   }
   let [IsLogged,SetIsLogged] = useState('false')
 
+  const navigate = useNavigate()
 
   
   return (
     <AppBar position="static">
         <Toolbar>
-          <Typography
+          <Button
           variant='h6'
           component="span"
-          sx = {{ flexGrow : 1}}
+          onClick={() => {navigate('/')}}
           >
           Navbar
-          </Typography>
-          <IconButton
-            color='inherit'
+          </Button>
+          <Button
+          variant='h6'
+          component="span"
+          onClick={() => {navigate('/posts')}}
           >
-            <LogoutIcon></LogoutIcon>
-          </IconButton>
+          Goods
+          </Button>
+          <Button
+          variant='h6'
+          component="span"
+          onClick={() => {navigate('/mygoods')}}
+          >
+          Mygoods
+          </Button>
+          {auth?.access_token
+          ? (
+            <Button
+            startIcon={<LogoutIcon/>}
+            variant='h6'
+            onClick={() => {UserLogout()}}
+            sx = {{left :'85%'}}
+            component="span">
+                Logout
+            </Button>
+          )
+          :(
+            <Button
+            startIcon={<LoginIcon/>}
+            onClick={() => {navigate('/login')}}
+            variant='h6'
+            sx = {{left :'85%'}}
+            component="span">
+                Login
+            </Button>
+          )}
+
         </Toolbar>
     </AppBar>
   )

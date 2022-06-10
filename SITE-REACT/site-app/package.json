@@ -7,10 +7,12 @@
     "@emotion/styled": "^11.8.1",
     "@mui/icons-material": "^5.8.2",
     "@mui/material": "^5.8.2",
+    "@paypal/react-paypal-js": "^7.8.1",
     "@react-three/drei": "^8.20.2",
     "@react-three/fiber": "^7.0.0",
     "axios": "^0.27.2",
     "react": "^18.1.0",
+    "react-hot-toast": "^2.2.0",
     "react-icons": "^4.4.0",
     "react-router-dom": "^6.3.0"
   },

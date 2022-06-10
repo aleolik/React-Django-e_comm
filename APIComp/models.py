@@ -12,7 +12,6 @@ from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser,BaseUserManager,PermissionsMixin
 
 from django.db.models.signals import post_save
-import pytz
 User = settings.AUTH_USER_MODEL
 now = timezone.now()
 
@@ -92,5 +91,6 @@ class NewUser(AbstractBaseUser,PermissionsMixin):
 
     def __str__(self):
         return self.user_name
+
 
 

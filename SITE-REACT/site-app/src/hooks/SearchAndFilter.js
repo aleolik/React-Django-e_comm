@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import axiosInstance from '../axiosinstance'
 
-const SearchAndFilter = (page=1,url='',user_name='',search='',category='',setisloading) => {
-
+const SearchAndFilter = (page=1,url='',user_name='',search='',category='') => {
+  if (typeof category === 'object'){
+    category = category.title
+  }
   const GetData = async() =>{
     try{
       const res = await axiosInstance.get(url,{
@@ -26,9 +28,9 @@ const SearchAndFilter = (page=1,url='',user_name='',search='',category='',setisl
       })
       return [res.data.count,res.data.results]
     }
-    finally{
-      setisloading(false)
-    }
+    // finally{
+    //   setisloading(false)
+    // }
   }
 
   return GetData()

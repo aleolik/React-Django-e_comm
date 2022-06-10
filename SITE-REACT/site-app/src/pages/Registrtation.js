@@ -26,8 +26,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 import axiosInstance from '../axiosinstance';
 
-
-import photo from '../static/goods_bg.jpg'
+import photo from '../static/dark_bg.jpg'
 
 import {FaUserEdit} from 'react-icons/fa'
 

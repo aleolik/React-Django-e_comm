@@ -28,12 +28,12 @@ import AxiosPrivate from '../axiosinstance'
 import useAuth from '../hooks/useAuth';
 
 
-import photo from '../static/goods_bg.jpg'
+import photo from '../static/dark_bg.jpg'
 function Copyright(props) {
   return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
+    <Typography variant="body2" color="text.primary.light" align="center" {...props}>
       {'Copyright © '}
-      <Link color="inherit" href="/">
+      <Link color="primary.light" href="/">
         Sezars
       </Link>{' '}
       {new Date().getFullYear()}
@@ -43,7 +43,20 @@ function Copyright(props) {
 }
 
 
-const theme = createTheme();
+const theme = createTheme(
+  {
+    components : {
+      MuiInputBase : {
+        styleOverrides : {
+          root : {
+            backgroundColor : 'white',
+            color : 'black',
+          }
+        }
+      }
+    }
+  }
+);
 
 const Login = () => {
     const navigate = useNavigate()
@@ -78,6 +91,7 @@ const Login = () => {
   
     useEffect(() => {
       localStorage.setItem("persist",persist_log)
+      console.log(location)
     },[persist_log])
 
   const handleSubmit = async(event) => {
@@ -107,7 +121,7 @@ const Login = () => {
   return (
     <div style={{'backgroundImage':`url(${photo})`,height:100+'vh','paddingTop':5+'%'}}>
     <ThemeProvider theme={theme}>
-      <Container component="main" maxWidth="xs">
+      <Container component="main" maxWidth="xs" sx={{color:'primary.light'}}>
         <CssBaseline />
         <Box
           sx={{
@@ -117,7 +131,7 @@ const Login = () => {
             alignItems: 'center',
           }}
         >
-          <Container component="main" maxWidth="xs" className='reg_container'>
+          <Container component="main" maxWidth="xs" className='reg_container' sx={{color:'white'}}>
           <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
             <LockOutlinedIcon />
           </Avatar>

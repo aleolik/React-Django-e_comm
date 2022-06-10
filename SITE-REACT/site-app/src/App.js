@@ -1,4 +1,4 @@
-import {Routes,Route,Link} from 'react-router-dom'
+import {Routes,Route,Link, Navigate} from 'react-router-dom'
 import About from './pages/About';
 import Login from './pages/Login';
 import SignIn from './pages/Registrtation';
@@ -52,7 +52,9 @@ function App() {
 
                 <Route path='posts/post/:name' element={<PostPage/>}></Route>
 
-                <Route path="*" element={<Notfoundpage/>}/>
+                <Route path="*" element={<Navigate to='not-found-page'/>}/>
+
+                <Route path="not-found-page" element={<Notfoundpage/>}/>
 
                 <Route path='Activation_link/:user_name' element={<ActivateAccPage/>}></Route>
 

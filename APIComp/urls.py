@@ -26,6 +26,7 @@ urlpatterns = [
 
     #get posts by categories
     path('posts_by_categories/',views.Get_posts_by_category.as_view(),name='posts_by_categoreis'),
+    path('get_single_post/',views.GetSinglePost.as_view(),name='get_single_post'),
 
     # Admin Only
     # get list of users

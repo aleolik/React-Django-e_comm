@@ -1,10 +1,10 @@
 
 
+
 from rest_framework.settings import api_settings
 from django.http import JsonResponse
 from requests import post, request
 from rest_framework import authentication
-from urllib import response
 from rest_framework_simplejwt.tokens import RefreshToken,AccessToken
 from django.middleware import csrf
 from django.contrib.auth import authenticate
@@ -229,8 +229,9 @@ class Logout(APIView):
 PostsPagination = api_settings.DEFAULT_PAGINATION_CLASS
 class Get_posts_by_category(APIView,PostsPagination):
     def get(self,request):
-        category = request.query_params["category"]
-        if category:
+        category_title = request.query_params["category"]
+        if category_title:
+            category = Category.objects.filter(title=category_title).first()
             posts = Post.objects.filter(category=category) 
             if posts:
                 paginated_posts = self.paginate_queryset(posts,request=request)
@@ -336,9 +337,11 @@ class GetUserCart(APIView,PostsPagination):
 class GetPostsByCategoryAndSearch(APIView,PostsPagination):
     def get(self,request):
         search = request.query_params['search']
-        cateogry = request.query_params['category']
-        if search and cateogry:
-            found_posts = Post.objects.filter(category_id=cateogry,name__icontains = search)
+        category_title = request.query_params['category']
+        if search and category_title:
+            category = Category.objects.filter(title=category_title).first()
+
+            found_posts = Post.objects.filter(category=category,name__icontains = search)
 
             found_posts = self.paginate_queryset(found_posts,request=request)
             if found_posts:
@@ -348,3 +351,15 @@ class GetPostsByCategoryAndSearch(APIView,PostsPagination):
             return Response('cant found posts to chosen category',status=status.HTTP_204_NO_CONTENT)
             
         return Response('no search or category',status=status.HTTP_204_NO_CONTENT)
+
+
+
+class GetSinglePost(APIView):
+    def get(self,request):
+        try:
+            name = request.query_params['name']
+            post = Post.objects.get(name=name)
+            post = PostSerializer(post,context={'request':request}).data
+            return Response(post,status=status.HTTP_200_OK)
+        except:
+           return Response('Name is Empty or wrong',status=status.HTTP_404_NOT_FOUND)

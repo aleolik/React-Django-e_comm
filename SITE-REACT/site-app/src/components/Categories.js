@@ -3,11 +3,13 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 
 import CategoryItem from './CategoryItem'
+import { Grid } from '@mui/material'
 const Categories = (props) => {
-  let [categories,Setcateogries] = useState([])
 
   
   const SetCurrentCategory = props.SetCurrentCategory
+
+  const [categories,setCategories] = useState([])
 
   const url = `http://127.0.0.1:8000/getlistcategories/`
   useEffect(() => {
@@ -17,20 +19,14 @@ const Categories = (props) => {
             _page : 1,
           }
         }).then((response) => {Setcateogries(response.data.results)})
-        return categories
+        setCategories(categories)
     }
     GetCats()
+    console.log('cats are',categories)
   },[])
+
   return(
-    <div>
-      {categories.map((category) => {
-        return(
-          <div key={category.id}>
-            <CategoryItem category={category} SetCurrentCategory={SetCurrentCategory}/>
-          </div>
-        )
-      })}
-    </div>
+    categories
   )
 }
 

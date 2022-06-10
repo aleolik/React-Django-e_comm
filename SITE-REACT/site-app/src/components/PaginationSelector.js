@@ -9,10 +9,6 @@ const PaginationSelector = (props) => {
 
   const setPage = props.setPage
 
-
-  console.log(all_pages)
-  
-
   return (
     <nav aria-label="Page navigation example" style={{'paddingRight':20+'%','paddingTop':3+'%'}}>
      <ul class="pagination justify-content-center">

@@ -1,3 +1,4 @@
+import { Grid, MenuItem } from '@mui/material'
 import React from 'react'
 
 import { useState } from 'react'
@@ -7,9 +8,7 @@ const CategoryItem = (props) => {
     const SetCurrentCategory = props.SetCurrentCategory
 
     return(
-        <div>
-            <button className='btn-selfmade-blue' onClick={() => SetCurrentCategory(category.id)}><span>{category.title}</span><i></i></button>
-        </div>
+        <MenuItem defaultValue={category.id} key={category.id}>{category.title}</MenuItem>
     )
 }
 
