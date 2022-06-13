@@ -9,7 +9,6 @@ import { useLocation, useNavigate } from 'react-router-dom'
 
 import { Link } from 'react-router-dom'
 
-import {FaHryvnia} from 'react-icons/fa'
 
 import Loader from '../components/Loader'
 
@@ -46,6 +45,9 @@ import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 
 import {FaDollarSign} from 'react-icons/fa'
+
+import {CgCloseR} from 'react-icons/cg'
+
 const Mygoods = () => {
 
   const { auth } = useAuth()
@@ -83,6 +85,10 @@ const Mygoods = () => {
   const [sum,setsum] = useState(0)
 
   const [status,setStatus] = useState('') // может быть пустым,PROCESSING или COMPLETED
+
+  const [orders,setOrders] = useState([])
+
+  const [PostOrders,setPostOrders] = useState([])
 
   const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -160,39 +166,84 @@ const Mygoods = () => {
         setCount(res[0])
     }
     const RenderPosts = async () => {
+      if (!status){
+        try{
+          GetItemInCart()
+          setOrders(null)
+        }
+        catch(e){
+          console.error(e)
+        }
+        finally{
+          setPostsLoading(false)
+        }
+      }
+    }
+    RenderPosts()
+  },[Page,status])
+  let height = 100 + CartItems.length * 9
+
+
+  useEffect(() => {
+    if (status === 'PROC'){
+      const url = `get-orders-in-processing/`
+      const GetOrdersInProcessing = async () => {
+        const res = await axiosInstance.get(url,{
+          params : {
+            user_name : auth?.user_name
+          }
+        })
+        // получение всех ордеров
+        const temp_orders = res.data.orders
+        console.log(temp_orders)
+        setOrders(temp_orders)
+        setPostOrders(res.data.posts)
+      }
       try{
-        GetItemInCart()
+        GetOrdersInProcessing()
       }
       catch(e){
         console.error(e)
       }
-      finally{
-        setPostsLoading(false)
-      }
-    }
-    RenderPosts()
-  },[Page])
-  let height = 100 + CartItems.length * 35
 
+    }
+  },[status])
 
   const SelectAll = async () =>{
     // do later
   }
+
+  /* 
+    TODO tomorrow :
+      1)Search Bar
+      2) Deleting item
+      3)Bug fixes (checkbox when approved,router to the item in processing) * 
+  */
   return(
     <div style={{'height':height+'vh','backgroundImage':`url(${photo})`}} >
           {isPostsLoading
           ? (<div className='d-flex align-items-center justify-content-center' style={{'paddingTop':20+'%'}}><Loader/></div>)
           : (<Container>
+            {!status && (
+              <div className='d-flex align-items-center justify-content-center'>
+                <Paypal posts={selectedPosts} price={sum} setsum={setsum} setselectedPosts={setselectedPosts}/>
+              </div>
+            )}
             <div className='d-flex align-items-center justify-content-center'>
-              <Paypal posts={selectedPosts} price={sum}/>
-            </div>
-            <div className='d-flex align-items-center justify-content-center'>
-              {selectedPosts.length === count
-              ? (<Button variant="outlined">Выбрано : Все</Button>)
-              : (<Button variant="outlined">Выбрано : {selectedPosts.length}</Button>)}
-              <Button variant="outlined" color='warning' onClick={() => {setStatus('PROCESSING')}}>В процессе</Button>
-              <Button variant="outlined" color='success' onClick={() => {setStatus('COMPLETED')}}>Купленные Товары</Button>
-              <Button variant='contained' color='info' onClick={() => SelectAll()}>Выбрать Все</Button>
+              {selectedPosts.length === count && !status && (
+                (<Button variant="outlined">Выбрано : Все</Button>)
+              )}
+              {selectedPosts.length !== count && !status && 
+              (<Button variant="outlined">Выбрано : {selectedPosts.length}</Button>)}
+              {status && 
+                (<Button variant="outlined" onClick={() => {setStatus('')}} sx={{'left':20+'px'}}>Показать Корзину</Button>)
+              }
+              <Button></Button>
+              <Button variant="outlined" color='warning' onClick={() => {setStatus('PROC')}}>В процессе</Button>
+              <Button variant="outlined" color='success' onClick={() => {setStatus('CMPL')}}>Купленные Товары</Button>
+              {!status && (
+                <Button variant='outlined' color='info' onClick={() => SelectAll()}>Выбрать Все</Button>
+              )}
                     <Typography
                   variant="h6"
                   noWrap
@@ -211,43 +262,68 @@ const Mygoods = () => {
                   />
                 </Search>
             </div>
-          {!status && (
-             <Grid  container spacing={2}>
-             {CartItems.map((post) => {    
-               return(
-                    <Grid item  md={4}  xs={12} key={post.id}>
-                        <Card sx={{height:'100%'}}>
-                            <CardMedia
-                            component="img"
-                            src = {post.photo}
-                            alt = {post.name}
-                            title = {post.name}
-                            sx = {{height : 400}}
-                            />
-                            <CardContent>
-                                <Typography
-                                variant = "h6"
-                                component = "h3"
-                                >
-                                    {post.name}
-                                </Typography>
-                                <Typography variant='body1'>Цена : {post.price}<FaDollarSign/></Typography>
-                            </CardContent>
-                            <CardActions>
-                            {selectedPosts.includes(post.id)
-                              ? (
-                                <Checkbox {...label} defaultChecked  onChange={() => {CheckPosts(event,post)}} />
-                              )
-                              : (<Checkbox {...label}  onChange={() => {CheckPosts(event,post)}} />)
-                            }
-                            </CardActions>
-                        </Card>
-                    </Grid>
-               )
-             })}
-             </Grid>
-          )}
-          <PaginationSelector page={Page} setPage={setPage} allPages = {totalPages}/>
+             {orders 
+             ? (<div>
+                {orders.map((order) => {
+                  return(
+                    <Container sx={{'backgroundColor':'white'}}>
+                        <div key={order.id}>
+                          {PostOrders.map((PostOrder) => {
+                          if (order.post.includes(PostOrder.id)){
+                            return(
+                              <div key={PostOrder.id}>                            
+                                <h6>{PostOrder.name}</h6>
+                              </div>
+                            )
+                          }                                               
+                          })}
+                        </div>
+                        <hr style={{'paddingBottom':20+'px'}}></hr>
+                         <h6>Order was made : {order.time_created.slice(0,10)} in {order.time_created.slice(11,19)}</h6>
+                        <h6 style={{'paddingBottom':3+'%'}}>Price of the order :{order.price}<FaDollarSign/></h6>
+                    </Container>
+                  ) 
+                })}
+              </div>
+             )
+             : ( <Grid  container spacing={2}>
+              {CartItems.map((post) => {    
+                return(
+                     <Grid item  md={4}  xs={12} key={post.id}>
+                         <Card sx={{height:'100%'}}>
+                             <CardMedia
+                             component="img"
+                             src = {post.photo}
+                             alt = {post.name}
+                             title = {post.name}
+                             sx = {{height : 400}}
+                             />
+                             <CardContent>
+                                 <Typography
+                                 variant = "h6"
+                                 component = "h3"
+                                 >
+                                     {post.name}
+                                 </Typography>
+                                 <Typography variant='body1'>Цена : {post.price}<FaDollarSign/></Typography>
+                             </CardContent>
+                             <CardActions>
+           
+                             {selectedPosts.includes(post.name)
+                               ? (
+                                 <Checkbox {...label} checked  onChange={() => {CheckPosts(event,post)}} />
+                               )
+                               : (<Checkbox {...label}  onChange={() => {CheckPosts(event,post)}} />)}        
+                               <div style={{'position':'relative','left':70+'%'}}><CgCloseR style={{'color':'red','width':25+'px','height':25+'px'}} onClick={() => {console.log('del item')}}/> </div>      
+                             </CardActions>
+                         </Card>
+                     </Grid>
+                )
+              })}                    
+              </Grid>)}
+              {CartItems.length > 0 && totalPages > 1   && (
+                <PaginationSelector page={Page} setPage={setPage} allPages = {totalPages}/>
+              )}
           </Container>)}
     </div>  
   )

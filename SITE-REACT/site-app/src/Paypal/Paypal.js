@@ -9,8 +9,10 @@ const Paypal = (props) => {
   
   const price = props.price
 
+  const setselectedPosts = props.setselectedPosts
+
   return (
-      <Payment sum={sum} posts={posts} price={price}/>
+      <Payment sum={sum} posts={posts} price={price} setselectedPosts={setselectedPosts}/>
   )
 }
 

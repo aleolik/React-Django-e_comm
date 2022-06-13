@@ -1,5 +1,5 @@
 
-import { PayPalButtons } from '@paypal/react-paypal-js';
+import { PayPalButtons, PayPalScriptProvider } from '@paypal/react-paypal-js';
 import React, { useEffect, useRef, useState } from 'react'
 
 import ReactDOM from "react-dom"
@@ -12,7 +12,9 @@ import useAuth from '../hooks/useAuth';
 
 const Payment = (props) => {
 
-  const posts =  props.posts || []
+  let posts =  props.posts || []
+
+  const setselectedPosts = props.setselectedPosts || (function(){})
 
   const PayPalButton = paypal.Buttons.driver("react", { React, ReactDOM });
 
@@ -36,7 +38,6 @@ const Payment = (props) => {
   };
   const onApprove = (data,actions) => {
     return actions.order.capture().then(details => {
-      console.log(details)
       toast.success("Payment completed,you can check your order in 'В процессе' menu",{
         duration : 7000
       })
@@ -47,6 +48,7 @@ const Payment = (props) => {
         user_name : auth?.user_name,
         post_names : posts
       })
+      setselectedPosts([])
     })
   }
 
@@ -65,7 +67,7 @@ const Payment = (props) => {
   return (
     <div>
       <Toaster position="top-center"/>
-    {price
+    {posts.length > 0
     ? (<PayPalButton
       createOrder={(data, actions) => createOrder(data, actions)}
       onCancel={() => onCancel()}
@@ -73,7 +75,9 @@ const Payment = (props) => {
       onApprove = {(data,actions) => {onApprove(data,actions)}}
       >
     </PayPalButton>)
-    :(<h2>Sum is 0</h2>)
+    :(<PayPalScriptProvider>
+        <PayPalButtons disabled></PayPalButtons>
+      </PayPalScriptProvider>)
     }
     </div>
   )
